@@ -1,0 +1,4 @@
+capacitor-checkout
+*.zip
+.swiftpm
+

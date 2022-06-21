@@ -4,7 +4,6 @@ portals_dev_release_commit() {
   git log --oneline | grep -B 1 "Release $1" | head -n1 | sed 's/ /\n/g' | head -n1 | xargs git checkout
 }
 
-
 build_capacitor_simulator() {
   xcodebuild archive \
     -scheme Capacitor \
@@ -28,6 +27,9 @@ build_capacitor_ios() {
 create_xcframeworks() {
   build_capacitor_simulator
   build_capacitor_ios
+
+  rm -rf ./Build/iOS-Simulator.xcarchive/Products/Library/Frameworks/Capacitor.framework/Frameworks
+  rm -rf ./Build/iOS.xcarchive/Products/Library/Frameworks/Capacitor.framework/Frameworks
 
   xcodebuild -create-xcframework \
     -framework ./Build/iOS-Simulator.xcarchive/Products/Library/Frameworks/Capacitor.framework \
@@ -81,14 +83,14 @@ EOF
 git clone https://github.com/ionic-team/capacitor capacitor-checkout
 cd capacitor-checkout/ios/Capacitor
 git checkout portals-dev
-#portals_dev_release_commit $1
+portals_dev_release_commit $1
 
 create_xcframeworks
 
 cap_url="https://github.com/ionic-team/capacitor-swift-pm/releases/download/$1/Capacitor.xcframework.zip"
-cap_sha=$(sha256sum Capacitor.xcframework.zip | sed 's/ /\n/g' | head -n1 | xargs echo -n)
+cap_sha=$(shasum -a 256 Capacitor.xcframework.zip | sed 's/ /\n/g' | head -n1 | xargs echo -n)
 cap_cordova_url="https://github.com/ionic-team/capacitor-swift-pm/releases/download/$1/CapacitorCordova.xcframework.zip"
-cap_cordova_sha=$(sha256sum Cordova.xcframework.zip | sed 's/ /\n/g' | head -n1 | xargs echo -n)
+cap_cordova_sha=$(shasum -a 256 Cordova.xcframework.zip | sed 's/ /\n/g' | head -n1 | xargs echo -n)
 
 cd ../../../
 

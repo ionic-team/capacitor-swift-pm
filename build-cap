@@ -89,7 +89,7 @@ create_xcframeworks
 
 cap_url="https://github.com/ionic-team/capacitor-swift-pm/releases/download/$1/Capacitor.xcframework.zip"
 cap_sha=$(shasum -a 256 Capacitor.xcframework.zip | sed 's/ /\n/g' | head -n1 | xargs echo -n)
-cap_cordova_url="https://github.com/ionic-team/capacitor-swift-pm/releases/download/$1/CapacitorCordova.xcframework.zip"
+cap_cordova_url="https://github.com/ionic-team/capacitor-swift-pm/releases/download/$1/Cordova.xcframework.zip"
 cap_cordova_sha=$(shasum -a 256 Cordova.xcframework.zip | sed 's/ /\n/g' | head -n1 | xargs echo -n)
 
 cd ../../../

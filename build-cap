@@ -10,6 +10,7 @@ build_capacitor_simulator() {
     -workspace Capacitor.xcworkspace \
     -destination "generic/platform=iOS Simulator" \
     -archivePath ./Build/iOS-Simulator \
+    -configuration Debug \
     SKIP_INSTALL=NO \
     BUILD_LIBRARY_FOR_DISTRIBUTION=YES
 }
@@ -21,7 +22,17 @@ build_capacitor_ios() {
     -destination "generic/platform=iOS" \
     -archivePath ./Build/iOS \
     SKIP_INSTALL=NO \
+    SWIFT_SERIALIZE_DEBUGGING_OPTIONS=NO \
+    DEBUG_INFORMATION_FORMAT="dwarf-with-dsym" \
     BUILD_LIBRARY_FOR_DISTRIBUTION=YES
+}
+
+cap_bcsymbol() {
+  echo -n $(dwarfdump -u $PWD/Build/iOS.xcarchive/Products/Library/Frameworks/Capacitor.framework/Capacitor | grep -Ewo '[[:xdigit:]]{8}(-[[:xdigit:]]{4}){3}-[[:xdigit:]]{12}')
+}
+
+cordova_bcsymbol() {
+  echo -n $(dwarfdump -u $PWD/Build/iOS.xcarchive/Products/Library/Frameworks/Cordova.framework/Cordova | grep -Ewo '[[:xdigit:]]{8}(-[[:xdigit:]]{4}){3}-[[:xdigit:]]{12}')
 }
 
 create_xcframeworks() {
@@ -34,11 +45,15 @@ create_xcframeworks() {
   xcodebuild -create-xcframework \
     -framework ./Build/iOS-Simulator.xcarchive/Products/Library/Frameworks/Capacitor.framework \
     -framework ./Build/iOS.xcarchive/Products/Library/Frameworks/Capacitor.framework \
+    -debug-symbols $PWD/Build/iOS.xcarchive/dSYMs/Capacitor.framework.dSYM \
+    -debug-symbols $PWD/Build/iOS.xcarchive/BCSymbolMaps/$(cap_bcsymbol).bcsymbolmap \
     -output Capacitor.xcframework
 
   xcodebuild -create-xcframework \
     -framework ./Build/iOS-Simulator.xcarchive/Products/Library/Frameworks/Cordova.framework \
     -framework ./Build/iOS.xcarchive/Products/Library/Frameworks/Cordova.framework \
+    -debug-symbols $PWD/Build/iOS.xcarchive/dSYMs/Cordova.framework.dSYM \
+    -debug-symbols $PWD/Build/iOS.xcarchive/BCSymbolMaps/$(cordova_bcsymbol).bcsymbolmap \
     -output Cordova.xcframework
 
   zip -r Capacitor.xcframework.zip Capacitor.xcframework
@@ -82,8 +97,7 @@ EOF
 
 git clone https://github.com/ionic-team/capacitor capacitor-checkout
 cd capacitor-checkout/ios/Capacitor
-git checkout portals-dev
-portals_dev_release_commit $1
+git checkout $1
 
 create_xcframeworks
 

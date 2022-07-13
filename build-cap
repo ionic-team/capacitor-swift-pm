@@ -1,9 +1,5 @@
 #!/bin/bash -eoux pipefail
 
-portals_dev_release_commit() {
-  git log --oneline | grep -B 1 "Release $1" | head -n1 | sed 's/ /\n/g' | head -n1 | xargs git checkout
-}
-
 build_capacitor_simulator() {
   xcodebuild archive \
     -scheme Capacitor \

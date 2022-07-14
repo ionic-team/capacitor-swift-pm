@@ -1,0 +1,30 @@
+name: Pre-Release
+
+on:
+  push:
+    branches:
+    - 'release/**'
+
+job:
+  build:
+    runs-on: macos-latest
+    timeout-minutes: 30
+    steps:
+      - run: sudo xcode-select --switch /Applications/Xcode_13.0.app
+      - uses: actions/checkout@v2
+      - name: Install build dependencies
+        run: gem install cocoapods xcpretty
+      - name: Assign version to RELEASE_VERSION environment variable
+        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/*/}" >> $GITHUB_ENV
+      - name: Build Capacitor and Cordova
+        run: ./build-cap $RELEASE_VERSION
+      - name: Push manifest update
+        uses: EndBug/add-and-commit@v9
+      - name: Create Draft Release
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: "./capacitor-checkout/ios/Capacitor/Capacitor.xcframework.zip,./capacitor-checkout/ios/Capacitor/Cordova.xcframework.zip"
+          draft: true
+          allowUpdates: true
+          tag: ${{ env.RELEASE_VERSION }}
+

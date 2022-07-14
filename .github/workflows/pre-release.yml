@@ -25,6 +25,5 @@ jobs:
         with:
           artifacts: "./capacitor-checkout/ios/Capacitor/Capacitor.xcframework.zip,./capacitor-checkout/ios/Capacitor/Cordova.xcframework.zip"
           draft: true
-          allowUpdates: true
           tag: ${{ env.RELEASE_VERSION }}
 

@@ -5,7 +5,7 @@ on:
     branches:
     - 'release/**'
 
-job:
+jobs:
   build:
     runs-on: macos-latest
     timeout-minutes: 30

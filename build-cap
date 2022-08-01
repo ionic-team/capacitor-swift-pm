@@ -67,8 +67,12 @@ let package = Package(
     products: [
         .library(
             name: "Capacitor",
-            targets: ["Capacitor", "Cordova"]
+            targets: ["Capacitor"]
         ),
+        .library(
+            name: "Cordova",
+            targets: ["Cordova"]
+        )
     ],
     dependencies: [],
     targets: [
@@ -99,6 +103,8 @@ cap_cordova_url="https://github.com/ionic-team/capacitor-swift-pm/releases/downl
 cap_cordova_sha=$(shasum -a 256 Cordova.xcframework.zip | sed 's/ /\n/g' | head -n1 | xargs echo -n)
 
 cd ../../../
+mkdir frameworks
+mv capacitor-checkout/ios/Capacitor/{Capacitor,Cordova}.xcframework.zip frameworks
 
 write_package_file $cap_url $cap_sha $cap_cordova_url $cap_cordova_sha
 

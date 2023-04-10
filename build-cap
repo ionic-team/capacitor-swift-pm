@@ -57,9 +57,14 @@ cordova_bcsymbol() {
 create_xcframeworks() {
   build_capacitor_simulator
   build_capacitor_ios
+  build_capacitor_macOS_simulator
+  build_capacitor_macOS
 
   rm -rf ./Build/iOS-Simulator.xcarchive/Products/Library/Frameworks/Capacitor.framework/Frameworks
   rm -rf ./Build/iOS.xcarchive/Products/Library/Frameworks/Capacitor.framework/Frameworks
+  rm -rf ./Build/macOS-Simulator.xcarchive/Products/Library/Frameworks/Capacitor.framework/Frameworks
+  rm -rf ./Build/macOS.xcarchive/Products/Library/Frameworks/Capacitor.framework/Frameworks
+  rm -rf ./Build/macOS-Catalyst.xcarchive/Products/Library/Frameworks/Capacitor.framework/Frameworks
 
   xcodebuild -create-xcframework \
     -framework ./Build/iOS-Simulator.xcarchive/Products/Library/Frameworks/Capacitor.framework \

@@ -6,7 +6,7 @@ build_capacitor_simulator() {
     -workspace Capacitor.xcworkspace \
     -destination "generic/platform=iOS Simulator" \
     -archivePath ./Build/iOS-Simulator \
-    -configuration Debug \
+    -configuration Release \
     SKIP_INSTALL=NO \
     BUILD_LIBRARY_FOR_DISTRIBUTION=YES
 }
@@ -23,14 +23,6 @@ build_capacitor_ios() {
     BUILD_LIBRARY_FOR_DISTRIBUTION=YES
 }
 
-cap_bcsymbol() {
-  echo -n $(dwarfdump -u $PWD/Build/iOS.xcarchive/Products/Library/Frameworks/Capacitor.framework/Capacitor | grep -Ewo '[[:xdigit:]]{8}(-[[:xdigit:]]{4}){3}-[[:xdigit:]]{12}')
-}
-
-cordova_bcsymbol() {
-  echo -n $(dwarfdump -u $PWD/Build/iOS.xcarchive/Products/Library/Frameworks/Cordova.framework/Cordova | grep -Ewo '[[:xdigit:]]{8}(-[[:xdigit:]]{4}){3}-[[:xdigit:]]{12}')
-}
-
 create_xcframeworks() {
   build_capacitor_simulator
   build_capacitor_ios
@@ -40,16 +32,16 @@ create_xcframeworks() {
 
   xcodebuild -create-xcframework \
     -framework ./Build/iOS-Simulator.xcarchive/Products/Library/Frameworks/Capacitor.framework \
+    -debug-symbols $PWD/Build/iOS-Simulator.xcarchive/dSYMs/Capacitor.framework.dSYM \
     -framework ./Build/iOS.xcarchive/Products/Library/Frameworks/Capacitor.framework \
     -debug-symbols $PWD/Build/iOS.xcarchive/dSYMs/Capacitor.framework.dSYM \
-    -debug-symbols $PWD/Build/iOS.xcarchive/BCSymbolMaps/$(cap_bcsymbol).bcsymbolmap \
     -output Capacitor.xcframework
 
   xcodebuild -create-xcframework \
     -framework ./Build/iOS-Simulator.xcarchive/Products/Library/Frameworks/Cordova.framework \
+    -debug-symbols $PWD/Build/iOS-Simulator.xcarchive/dSYMs/Cordova.framework.dSYM \
     -framework ./Build/iOS.xcarchive/Products/Library/Frameworks/Cordova.framework \
     -debug-symbols $PWD/Build/iOS.xcarchive/dSYMs/Cordova.framework.dSYM \
-    -debug-symbols $PWD/Build/iOS.xcarchive/BCSymbolMaps/$(cordova_bcsymbol).bcsymbolmap \
     -output Cordova.xcframework
 
   zip -r Capacitor.xcframework.zip Capacitor.xcframework

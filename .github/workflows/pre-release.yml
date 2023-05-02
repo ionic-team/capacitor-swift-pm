@@ -7,10 +7,10 @@ on:
 
 jobs:
   build:
-    runs-on: macos-11
+    runs-on: macos-12
     timeout-minutes: 30
     steps:
-      - run: sudo xcode-select --switch /Applications/Xcode_13.0.app
+      - run: sudo xcode-select --switch /Applications/Xcode_14.1.app
       - uses: actions/checkout@v2
       - name: Install build dependencies
         run: |

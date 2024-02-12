@@ -3,15 +3,15 @@ name: Pre-Release
 on:
   push:
     branches:
-    - 'release/**'
+      - "release/**"
 
 jobs:
   build:
-    runs-on: macos-12
+    runs-on: macos-14
     timeout-minutes: 30
     steps:
-      - run: sudo xcode-select --switch /Applications/Xcode_14.1.app
-      - uses: actions/checkout@v3
+      - run: sudo xcode-select --switch /Applications/Xcode_15.1.app
+      - uses: actions/checkout@v4
       - name: Install build dependencies
         run: |
           gem install cocoapods xcpretty
@@ -24,4 +24,3 @@ jobs:
         uses: EndBug/add-and-commit@v9
       - name: Create Draft Release
         run: ghr -token ${{ secrets.GITHUB_TOKEN }} -name ${{ env.RELEASE_VERSION }} -draft -replace ${{ env.RELEASE_VERSION }} frameworks
-

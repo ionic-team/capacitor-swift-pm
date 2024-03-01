@@ -1,4 +1,4 @@
-// swift-tools-version:5.3
+// swift-tools-version:5.9
 
 import PackageDescription
 
@@ -18,13 +18,15 @@ let package = Package(
     targets: [
         .binaryTarget(
             name: "Capacitor",
-            url: "https://github.com/ionic-team/capacitor-swift-pm/releases/download/6.0.0-rc.0/Capacitor.xcframework.zip",
-            checksum: "40931648c794e29ade96907e7e25747cac89ad6dc0841263be35c69108732a06"
+            path: "frameworks/Capacitor.xcframework.zip"
+            //url: "https://github.com/ionic-team/capacitor-swift-pm/releases/download/vision/Capacitor.xcframework.zip",
+            //checksum: "498e6b0ac4bd90537ea1983dc4541b5c08990f1d06ac5522e866284947b7d6e7"
         ),
         .binaryTarget(
             name: "Cordova",
-            url: "https://github.com/ionic-team/capacitor-swift-pm/releases/download/6.0.0-rc.0/Cordova.xcframework.zip",
-            checksum: "0f3eed00c80e54a50eb10c0c2c65c7f09ed0a3d4bddd2b95537f32cc3d41186f"
+            path: "frameworks/Cordova.xcframework.zip"
+            //url: "https://github.com/ionic-team/capacitor-swift-pm/releases/download/vision/Cordova.xcframework.zip",
+            //checksum: "964c266e7b761630c2dc21ee1a6cb3861379b72ef068d0f7ec2b7e2baf994a4f"
         )
     ]
 )

@@ -1,86 +1,49 @@
-#!/bin/bash -eoux pipefail
+#!/usr/bin/env bash -eoux pipefail
 
 build_capacitor_simulator() {
-  xcodebuild archive \
-    -scheme Capacitor \
-    -workspace Capacitor.xcworkspace \
-    -destination "generic/platform=iOS Simulator" \
-    -archivePath ./Build/iOS-Simulator \
-    -configuration Release \
-    SKIP_INSTALL=NO \
-    BUILD_LIBRARY_FOR_DISTRIBUTION=YES
+	xcodebuild archive \
+		-scheme Capacitor \
+		-workspace Capacitor.xcworkspace \
+		-destination "generic/platform=iOS Simulator" \
+		-archivePath ./Build/iOS-Simulator \
+		-configuration Release \
+		SKIP_INSTALL=NO \
+		BUILD_LIBRARY_FOR_DISTRIBUTION=YES
 }
 
 build_capacitor_ios() {
-  xcodebuild archive \
-    -scheme Capacitor \
-    -workspace Capacitor.xcworkspace \
-    -destination "generic/platform=iOS" \
-    -archivePath ./Build/iOS \
-    SKIP_INSTALL=NO \
-    SWIFT_SERIALIZE_DEBUGGING_OPTIONS=NO \
-    DEBUG_INFORMATION_FORMAT="dwarf-with-dsym" \
-    BUILD_LIBRARY_FOR_DISTRIBUTION=YES
+	xcodebuild archive \
+		-scheme Capacitor \
+		-workspace Capacitor.xcworkspace \
+		-destination "generic/platform=iOS" \
+		-archivePath ./Build/iOS \
+		SKIP_INSTALL=NO \
+		SWIFT_SERIALIZE_DEBUGGING_OPTIONS=NO \
+		DEBUG_INFORMATION_FORMAT="dwarf-with-dsym" \
+		BUILD_LIBRARY_FOR_DISTRIBUTION=YES
 }
 
 create_xcframeworks() {
-  build_capacitor_simulator
-  build_capacitor_ios
+	build_capacitor_simulator
+	build_capacitor_ios
 
-  rm -rf ./Build/iOS-Simulator.xcarchive/Products/Library/Frameworks/Capacitor.framework/Frameworks
-  rm -rf ./Build/iOS.xcarchive/Products/Library/Frameworks/Capacitor.framework/Frameworks
+	rm -rf ./Build/iOS-Simulator.xcarchive/Products/Library/Frameworks/Capacitor.framework/Frameworks
+	rm -rf ./Build/iOS.xcarchive/Products/Library/Frameworks/Capacitor.framework/Frameworks
 
-  xcodebuild -create-xcframework \
-    -framework ./Build/iOS-Simulator.xcarchive/Products/Library/Frameworks/Capacitor.framework \
-    -debug-symbols $PWD/Build/iOS-Simulator.xcarchive/dSYMs/Capacitor.framework.dSYM \
-    -framework ./Build/iOS.xcarchive/Products/Library/Frameworks/Capacitor.framework \
-    -debug-symbols $PWD/Build/iOS.xcarchive/dSYMs/Capacitor.framework.dSYM \
-    -output Capacitor.xcframework
+	xcodebuild -create-xcframework \
+		-framework ./Build/iOS-Simulator.xcarchive/Products/Library/Frameworks/Capacitor.framework \
+		-debug-symbols $PWD/Build/iOS-Simulator.xcarchive/dSYMs/Capacitor.framework.dSYM \
+		-framework ./Build/iOS.xcarchive/Products/Library/Frameworks/Capacitor.framework \
+		-debug-symbols $PWD/Build/iOS.xcarchive/dSYMs/Capacitor.framework.dSYM \
+		-output Capacitor.xcframework
 
-  xcodebuild -create-xcframework \
-    -framework ./Build/iOS-Simulator.xcarchive/Products/Library/Frameworks/Cordova.framework \
-    -debug-symbols $PWD/Build/iOS-Simulator.xcarchive/dSYMs/Cordova.framework.dSYM \
-    -framework ./Build/iOS.xcarchive/Products/Library/Frameworks/Cordova.framework \
-    -debug-symbols $PWD/Build/iOS.xcarchive/dSYMs/Cordova.framework.dSYM \
-    -output Cordova.xcframework
+	xcodebuild -create-xcframework \
+		-framework ./Build/iOS-Simulator.xcarchive/Products/Library/Frameworks/Cordova.framework \
+		-debug-symbols $PWD/Build/iOS-Simulator.xcarchive/dSYMs/Cordova.framework.dSYM \
+		-framework ./Build/iOS.xcarchive/Products/Library/Frameworks/Cordova.framework \
+		-debug-symbols $PWD/Build/iOS.xcarchive/dSYMs/Cordova.framework.dSYM \
+		-output Cordova.xcframework
 
-  zip -r Capacitor.xcframework.zip Capacitor.xcframework
-  zip -r Cordova.xcframework.zip Cordova.xcframework
-}
-
-write_package_file() {
-  cat << EOF > Package.swift
-// swift-tools-version:5.3
-
-import PackageDescription
-
-let package = Package(
-    name: "capacitor-swift-pm",
-    products: [
-        .library(
-            name: "Capacitor",
-            targets: ["Capacitor"]
-        ),
-        .library(
-            name: "Cordova",
-            targets: ["Cordova"]
-        )
-    ],
-    dependencies: [],
-    targets: [
-        .binaryTarget(
-            name: "Capacitor",
-            url: "$1",
-            checksum: "$2"
-        ),
-        .binaryTarget(
-            name: "Cordova",
-            url: "$3",
-            checksum: "$4"
-        )
-    ]
-)
-EOF
 }
 
 git clone https://github.com/ionic-team/capacitor capacitor-checkout
@@ -89,14 +52,5 @@ git checkout $1
 
 create_xcframeworks
 
-cap_url="https://github.com/ionic-team/capacitor-swift-pm/releases/download/$1/Capacitor.xcframework.zip"
-cap_sha=$(shasum -a 256 Capacitor.xcframework.zip | sed 's/ /\n/g' | head -n1 | xargs echo -n)
-cap_cordova_url="https://github.com/ionic-team/capacitor-swift-pm/releases/download/$1/Cordova.xcframework.zip"
-cap_cordova_sha=$(shasum -a 256 Cordova.xcframework.zip | sed 's/ /\n/g' | head -n1 | xargs echo -n)
-
-cd ../../../
-mkdir frameworks
-mv capacitor-checkout/ios/Capacitor/{Capacitor,Cordova}.xcframework.zip frameworks
-
-write_package_file $cap_url $cap_sha $cap_cordova_url $cap_cordova_sha
-
+mv Capacitor.xcframework ../../../
+mv Cordova.xcframework ../../../

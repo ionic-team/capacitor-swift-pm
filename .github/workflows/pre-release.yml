@@ -20,6 +20,18 @@ jobs:
         run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/*/}" >> $GITHUB_ENV
       - name: Build Capacitor and Cordova
         run: ./build-cap $RELEASE_VERSION
+      - name: Sign Capacitor xcframework
+        uses: ionic-team/sign-xcframework@main
+        with:
+          cert-token: ${{ secrets.XCFRAMEWORK_SIGNING_TOKEN }}
+          xcframework-path: Capacitor.xcframework
+      - name: Sign Cordova xcframework
+        uses: ionic-team/sign-xcframework@main
+        with:
+          cert-token: ${{ secrets.XCFRAMEWORK_SIGNING_TOKEN }}
+          xcframework-path: Cordova.xcframework
+      - name: Package Capacitor and Cordova
+        run: ./package-cap $RELEASE_VERSION
       - name: Push manifest update
         uses: EndBug/add-and-commit@v9
       - name: Create Draft Release

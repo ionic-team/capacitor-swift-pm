@@ -1,11 +1,11 @@
 #!/usr/bin/env bash -eoux pipefail
 
 mkdir frameworks
-zip -r Capacitor.xcframework.zip capacitor-checkout/ios/Capacitor/Capacitor.xcframework
-zip -r Cordova.xcframework.zip capacitor-checkout/ios/Cordova.xcframework
+zip -r frameworks/Capacitor.xcframework.zip Capacitor.xcframework
+zip -r frameworks/Cordova.xcframework.zip Cordova.xcframework
 
 write_package_file() {
-  cat << EOF > Package.swift
+	cat <<EOF >Package.swift
 // swift-tools-version:5.3
 
 import PackageDescription
@@ -45,4 +45,3 @@ cap_cordova_url="https://github.com/ionic-team/capacitor-swift-pm/releases/downl
 cap_cordova_sha=$(shasum -a 256 Cordova.xcframework.zip | sed 's/ /\n/g' | head -n1 | xargs echo -n)
 
 write_package_file $cap_url $cap_sha $cap_cordova_url $cap_cordova_sha
-

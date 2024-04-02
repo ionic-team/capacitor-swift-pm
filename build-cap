@@ -51,3 +51,6 @@ cd capacitor-checkout/ios/Capacitor
 git checkout $1
 
 create_xcframeworks
+
+mv Capacitor.xcframework ../../../
+mv Cordova.xcframework ../../../

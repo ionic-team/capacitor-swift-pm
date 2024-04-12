@@ -8,7 +8,7 @@ on:
         type: string
       draft-flag:
         type: string
-        default: -draft
+        default: " "
     secrets:
       XCFRAMEWORK_SIGNING_TOKEN:
         required: true

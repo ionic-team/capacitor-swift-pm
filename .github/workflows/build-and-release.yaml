@@ -25,12 +25,12 @@ jobs:
       - name: Build Capacitor and Cordova
         run: |
           set -eo pipefail 
-          ./build-cap ${{ inputs.release-version }} | tee -a capacitor-build.log | xcbeautify --renderer github-actions
+          ./build-cap ${{ inputs.release-version }}
       - name: Archive Log
         uses: actions/upload-artifact@v4
         with:
-          name: capacitor-build.log
-          path: capacitor-build.log
+          name: capacitor-build
+          path: capacitor-*-build.log
       - name: Sign Capacitor xcframework
         uses: ionic-team/sign-xcframework@main
         with:

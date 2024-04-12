@@ -12,8 +12,6 @@ on:
     secrets:
       XCFRAMEWORK_SIGNING_TOKEN:
         required: true
-      # RELEASE_TOKEN:
-      #   required: true
 
 jobs:
   build:
@@ -23,9 +21,16 @@ jobs:
       - run: sudo xcode-select --switch /Applications/Xcode_15.1.app
       - uses: actions/checkout@v4
       - name: Install dependencies
-        run: brew install ghr
+        run: brew install ghr xcbeautify
       - name: Build Capacitor and Cordova
-        run: ./build-cap ${{ inputs.release-version }}
+        run: |
+          set -eo pipefail 
+          ./build-cap ${{ inputs.release-version }} | tee -a capacitor-build.log | xcbeautify --renderer github-actions
+      - name: Archive Log
+        uses: actions/upload-artifact@v4
+        with:
+          name: capacitor-build.log
+          path: capacitor-build.log
       - name: Sign Capacitor xcframework
         uses: ionic-team/sign-xcframework@main
         with:

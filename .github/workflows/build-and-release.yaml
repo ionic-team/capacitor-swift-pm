@@ -1,0 +1,42 @@
+name: Build and Release
+
+on:
+  workflow_call:
+    inputs:
+      release-version:
+        required: true
+        type: string
+      draft-flag:
+        type: string
+        default: -draft
+    secrets:
+      XCFRAMEWORK_SIGNING_TOKEN:
+        required: true
+
+jobs:
+  build:
+    runs-on: macos-14
+    timeout-minutes: 30
+    steps:
+      - run: sudo xcode-select --switch /Applications/Xcode_15.1.app
+      - uses: actions/checkout@v4
+      - name: Install dependencies
+        run: brew install ghr
+      - name: Build Capacitor and Cordova
+        run: ./build-cap ${{ inputs.release-version }}
+      - name: Sign Capacitor xcframework
+        uses: ionic-team/sign-xcframework@main
+        with:
+          cert-token: ${{ secrets.XCFRAMEWORK_SIGNING_TOKEN }}
+          xcframework-path: Capacitor.xcframework
+      - name: Sign Cordova xcframework
+        uses: ionic-team/sign-xcframework@main
+        with:
+          cert-token: ${{ secrets.XCFRAMEWORK_SIGNING_TOKEN }}
+          xcframework-path: Cordova.xcframework
+      - name: Package Capacitor and Cordova
+        run: ./package-cap ${{ inputs.release-version }}
+      - name: Push manifest update
+        uses: EndBug/add-and-commit@v9
+      - name: Create Release
+        run: ghr -token ${{ secrets.GITHUB_TOKEN }} -name ${{ inputs.release-version }} ${{ inputs.draft-flag }} -replace ${{ inputs.release-version }} frameworks

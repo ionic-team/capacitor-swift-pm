@@ -1,0 +1,24 @@
+name: Dispatch Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      release-version:
+        description: The version to release
+        required: true
+        type: string
+      draft-flag:
+        description: "Create a Draft Release or Immediately Release"
+        type: choice
+        default: -draft
+        options:
+          - -draft
+          - ""
+
+jobs:
+  create-release:
+    uses: ./.github/workflows/build-and-release.yaml
+    with:
+      release-version: ${{ inputs.release-version }}
+      draft-flag: ${{ inputs.draft-flag }}
+    secrets: inherit

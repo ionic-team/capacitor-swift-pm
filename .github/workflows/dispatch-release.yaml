@@ -9,11 +9,8 @@ on:
         type: string
       draft-flag:
         description: "Create a Draft Release or Immediately Release"
-        type: choice
+        type: string
         default: -draft
-        options:
-          - -draft
-          - " "
 
 jobs:
   create-release:

@@ -21,16 +21,9 @@ jobs:
       - run: sudo xcode-select --switch /Applications/Xcode_15.1.app
       - uses: actions/checkout@v4
       - name: Install dependencies
-        run: brew install ghr xcbeautify
+        run: brew install ghr
       - name: Build Capacitor and Cordova
-        run: |
-          set -eo pipefail 
-          ./build-cap ${{ inputs.release-version }}
-      - name: Archive Log
-        uses: actions/upload-artifact@v4
-        with:
-          name: capacitor-build
-          path: capacitor-*-build.log
+        run: ./build-cap ${{ inputs.release-version }}
       - name: Sign Capacitor xcframework
         uses: ionic-team/sign-xcframework@main
         with:

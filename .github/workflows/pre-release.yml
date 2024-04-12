@@ -12,7 +12,7 @@ jobs:
       - run: echo "release_version=${GITHUB_REF#refs/*/*}" >> $GITHUB_OUTPUT
   create-pre-release:
     needs: release-version
-    uses: ./github/workflows/build-and-release.yaml
+    uses: ./.github/workflows/build-and-release.yaml
     with:
       release-version: ${{ jobs.release-version.outputs.release_version }}
     secrets: inherit

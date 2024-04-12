@@ -12,8 +12,8 @@ on:
     secrets:
       XCFRAMEWORK_SIGNING_TOKEN:
         required: true
-      GITHUB_TOKEN:
-        required: true
+      # RELEASE_TOKEN:
+      #   required: true
 
 jobs:
   build:

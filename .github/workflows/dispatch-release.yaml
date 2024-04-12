@@ -13,7 +13,7 @@ on:
         default: -draft
         options:
           - -draft
-          - ""
+          - " "
 
 jobs:
   create-release:

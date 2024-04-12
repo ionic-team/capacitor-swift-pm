@@ -9,7 +9,10 @@ jobs:
   release-version:
     runs-on: ubuntu-latest
     steps:
-      - run: echo "release_version=${GITHUB_REF#refs/*/*}" >> $GITHUB_OUTPUT
+      - run: |
+          echo $GITHUB_REF
+          echo "release_version=${GITHUB_REF#refs/*/*}" >> $GITHUB_OUTPUT
+          echo $GITHUB_OUTPUT
   create-pre-release:
     needs: release-version
     uses: ./.github/workflows/build-and-release.yaml

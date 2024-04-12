@@ -8,16 +8,14 @@ on:
 jobs:
   release-version:
     runs-on: ubuntu-latest
+    outputs:
+      release-version: ${{ steps.step1.outputs.release_version }}
     steps:
-      - run: |
-          echo $GITHUB_REF
-          release_version=${GITHUB_REF#refs/*/*/}
-          echo $release_version
-          echo "release_version=${GITHUB_REF#refs/*/*/}" >> $GITHUB_OUTPUT
-          cat $GITHUB_OUTPUT
+      - id: step1
+        run: echo "release_version=${GITHUB_REF#refs/*/*/}" >> $GITHUB_OUTPUT
   create-pre-release:
     needs: release-version
     uses: ./.github/workflows/build-and-release.yaml
     with:
-      release-version: ${{ needs.release-version.outputs.release_version }}
+      release-version: ${{ needs.release-version.outputs.release-version }}
     secrets: inherit

@@ -11,9 +11,9 @@ jobs:
     steps:
       - run: |
           echo $GITHUB_REF
-          release_version=${GITHUB_REF#refs/*/*}
+          release_version=${GITHUB_REF#refs/*/*/}
           echo $release_version
-          echo "release_version=${GITHUB_REF#refs/*/*}" >> $GITHUB_OUTPUT
+          echo "release_version=${GITHUB_REF#refs/*/*/}" >> $GITHUB_OUTPUT
           cat $GITHUB_OUTPUT
   create-pre-release:
     needs: release-version

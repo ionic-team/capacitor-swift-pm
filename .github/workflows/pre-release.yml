@@ -18,4 +18,5 @@ jobs:
     uses: ./.github/workflows/build-and-release.yaml
     with:
       release-version: ${{ needs.release-version.outputs.release-version }}
+      draft-flag: -draft
     secrets: inherit

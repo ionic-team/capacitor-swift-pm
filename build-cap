@@ -5,10 +5,11 @@ build_capacitor_simulator() {
 		-scheme Capacitor \
 		-workspace Capacitor.xcworkspace \
 		-destination "generic/platform=iOS Simulator" \
+		-configuration Debug \
 		-archivePath ./Build/iOS-Simulator \
-		-configuration Release \
 		SKIP_INSTALL=NO \
-		BUILD_LIBRARY_FOR_DISTRIBUTION=YES
+		BUILD_LIBRARY_FOR_DISTRIBUTION=YES \
+		DEBUG_INFORMATION_FORMAT="dwarf-with-dsym"
 }
 
 build_capacitor_ios() {

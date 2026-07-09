@@ -1,23 +1,25 @@
 #!/usr/bin/env bash -eoux pipefail
 
-build_capacitor_simulator() {
+build_simulator() {
+	local SCHEME=$1
 	xcodebuild archive \
-		-scheme Capacitor \
+		-scheme $SCHEME \
 		-workspace Capacitor.xcworkspace \
 		-destination "generic/platform=iOS Simulator" \
 		-configuration Debug \
-		-archivePath ./Build/iOS-Simulator \
+		-archivePath ./Build/$SCHEME-iOS-Simulator \
 		SKIP_INSTALL=NO \
 		BUILD_LIBRARY_FOR_DISTRIBUTION=YES \
 		DEBUG_INFORMATION_FORMAT="dwarf-with-dsym"
 }
 
-build_capacitor_ios() {
+build_ios() {
+	local SCHEME=$1
 	xcodebuild archive \
-		-scheme Capacitor \
+		-scheme $SCHEME \
 		-workspace Capacitor.xcworkspace \
 		-destination "generic/platform=iOS" \
-		-archivePath ./Build/iOS \
+		-archivePath ./Build/$SCHEME-iOS \
 		SKIP_INSTALL=NO \
 		SWIFT_SERIALIZE_DEBUGGING_OPTIONS=NO \
 		DEBUG_INFORMATION_FORMAT="dwarf-with-dsym" \
@@ -25,26 +27,28 @@ build_capacitor_ios() {
 }
 
 create_xcframeworks() {
-	build_capacitor_simulator
-	build_capacitor_ios
+	build_simulator Capacitor
+	build_simulator Cordova
 
-	rm -rf ./Build/iOS-Simulator.xcarchive/Products/Library/Frameworks/Capacitor.framework/Frameworks
-	rm -rf ./Build/iOS.xcarchive/Products/Library/Frameworks/Capacitor.framework/Frameworks
+	build_ios Capacitor
+	build_ios Cordova
+
+	rm -rf ./Build/Capacitor-iOS-Simulator.xcarchive/Products/Library/Frameworks/Capacitor.framework/Frameworks
+	rm -rf ./Build/Capacitor-iOS.xcarchive/Products/Library/Frameworks/Capacitor.framework/Frameworks
 
 	xcodebuild -create-xcframework \
-		-framework ./Build/iOS-Simulator.xcarchive/Products/Library/Frameworks/Capacitor.framework \
-		-debug-symbols $PWD/Build/iOS-Simulator.xcarchive/dSYMs/Capacitor.framework.dSYM \
-		-framework ./Build/iOS.xcarchive/Products/Library/Frameworks/Capacitor.framework \
-		-debug-symbols $PWD/Build/iOS.xcarchive/dSYMs/Capacitor.framework.dSYM \
+		-framework ./Build/Capacitor-iOS-Simulator.xcarchive/Products/Library/Frameworks/Capacitor.framework \
+		-debug-symbols $PWD/Build/Capacitor-iOS-Simulator.xcarchive/dSYMs/Capacitor.framework.dSYM \
+		-framework ./Build/Capacitor-iOS.xcarchive/Products/Library/Frameworks/Capacitor.framework \
+		-debug-symbols $PWD/Build/Capacitor-iOS.xcarchive/dSYMs/Capacitor.framework.dSYM \
 		-output Capacitor.xcframework
 
 	xcodebuild -create-xcframework \
-		-framework ./Build/iOS-Simulator.xcarchive/Products/Library/Frameworks/Cordova.framework \
-		-debug-symbols $PWD/Build/iOS-Simulator.xcarchive/dSYMs/Cordova.framework.dSYM \
-		-framework ./Build/iOS.xcarchive/Products/Library/Frameworks/Cordova.framework \
-		-debug-symbols $PWD/Build/iOS.xcarchive/dSYMs/Cordova.framework.dSYM \
+		-framework ./Build/Cordova-iOS-Simulator.xcarchive/Products/Library/Frameworks/Cordova.framework \
+		-debug-symbols $PWD/Build/Cordova-iOS-Simulator.xcarchive/dSYMs/Cordova.framework.dSYM \
+		-framework ./Build/Cordova-iOS.xcarchive/Products/Library/Frameworks/Cordova.framework \
+		-debug-symbols $PWD/Build/Cordova-iOS.xcarchive/dSYMs/Cordova.framework.dSYM \
 		-output Cordova.xcframework
-
 }
 
 git clone https://github.com/ionic-team/capacitor capacitor-checkout

@@ -24,9 +24,13 @@ jobs:
           else
             sudo xcode-select --switch /Applications/Xcode_26.0.app
           fi
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Install dependencies
         run: brew install ghr
+      - name: Check Simulators
+        run: xcrun simctl list > /dev/null
+      - name: Install Simulators
+        run: xcodebuild -downloadPlatform iOS
       - name: Build Capacitor and Cordova
         run: ./build-cap ${{ inputs.release-version }}
       - name: Sign Capacitor xcframework

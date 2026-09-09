@@ -3,4 +3,4 @@ capacitor-checkout
 *.zip
 .swiftpm
 frameworks
-
+.build

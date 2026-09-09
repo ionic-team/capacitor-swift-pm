@@ -18,6 +18,14 @@ jobs:
     runs-on: macos-15
     timeout-minutes: 30
     steps:
+      - name: Validate release version
+        run: |
+          version="${{ inputs.release-version }}"
+          major="${version%%.*}"
+          if [[ ! "$major" =~ ^[0-9]+$ ]] || (( major < 6 || major > 8 )); then
+            echo "::error::Capacitor $version is not supported by this repository. Starting with Capacitor 9 (see https://github.com/ionic-team/capacitor/pull/8588 PR), the iOS platform is a source-first Swift package built directly from the ionic-team/capacitor repository, so SPM distribution no longer happens here. This repository only releases major versions 6, 7, and 8."
+            exit 1
+          fi
       - run: |
           if [[ "${{ inputs.release-version }}" =~ ^[67]\. ]]; then
             sudo xcode-select --switch /Applications/Xcode_16.2.app

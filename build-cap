@@ -51,9 +51,8 @@ create_xcframeworks() {
 		-output Cordova.xcframework
 }
 
-git clone https://github.com/ionic-team/capacitor capacitor-checkout
+git clone --branch "$1" https://github.com/ionic-team/capacitor capacitor-checkout
 cd capacitor-checkout/ios/Capacitor
-git checkout $1
 
 create_xcframeworks
 
